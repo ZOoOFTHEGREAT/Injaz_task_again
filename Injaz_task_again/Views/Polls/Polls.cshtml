@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Injaz_task_again.Models.Poll>
+
+<h2>All Polls</h2>
+
+<a href="@Url.Action("Create", "Polls")" class="btn btn-primary mb-3">Create New Poll</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Poll Title</th>
+            <th>Questions</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var poll in Model)
+        {
+            <tr>
+                <td>@poll.Title</td>
+                <td>
+                    <ul>
+                        @foreach (var question in poll.Questions)
+                        {
+                            <li>@question.Text</li>
+                            @if (question.Answers != null)
+                            {
+                                <ul>
+                                    @foreach (var answer in question.Answers)
+                                    {
+                                        <li>
+                                            Answer: @answer.Text (@answer.SelectionCount votes)
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <p>No answers available for this question.</p>
+                            }
+                        }
+                    </ul>
+                </td>
+                <td>
+                    <a href="@Url.Action("AddQuestion", "Polls", new { id = poll.Id })" class="btn btn-secondary">Add Question</a>
+                    <a href="@Url.Action("DeletePoll", "Polls", new { id = poll.Id })" class="btn btn-secondary">Delete Poll</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

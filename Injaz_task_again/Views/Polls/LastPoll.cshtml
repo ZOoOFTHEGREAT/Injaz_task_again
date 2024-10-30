@@ -1,0 +1,64 @@
+﻿  @model Injaz_task_again.Models.Poll
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>LastPoll</title>
+</head>
+<body>
+    <form asp-action="AnswerPoll" method="post" id="answerForm">
+        <input type="hidden" name="pollId" value="@Model.Id" />
+
+        @if (Model.Questions != null)
+        {
+            @foreach (var question in Model.Questions)
+            {
+                <div>
+                    <h4>Question: @question.Text</h4>
+                    @if (question.Answers != null)
+                    {
+                        <ul>
+                            @foreach (var answer in question.Answers)
+                            {
+                                <li>
+                                    <label>
+                                        <input type="radio" name="selectedAnswers[@question.Id]" value="@answer.Id" class="answer-option" />
+                                        @answer.Text
+                                    </label>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            }
+        }
+
+        <button type="submit" class="btn btn-primary" id="submitButton" disabled>Submit Answers</button>
+    </form>
+</body>
+</html>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const questions = @Model.Questions.Count();
+        const submitButton = document.getElementById("submitButton");
+        const answerOptions = document.querySelectorAll(".answer-option");
+
+        function checkAllQuestionsAnswered() {
+            const answeredQuestions = new Set();
+
+            answerOptions.forEach(option => {
+                if (option.checked) {
+                    const questionId = option.name.match(/\d+/)[0]; 
+                    answeredQuestions.add(questionId); 
+                }
+            });
+            submitButton.disabled = answeredQuestions.size < questions;
+        }
+        answerOptions.forEach(option => {
+            option.addEventListener("change", checkAllQuestionsAnswered);
+        });
+    });
+</script>
